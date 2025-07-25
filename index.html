@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supertify: 인터랙티브 IR 리포트</title>
+    <script src="https://cdn.tailwindcss.com?plugins=aspect-ratio"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Supertify Dark Mode (Black/White/Pink) -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling narrative that now showcases real-world examples. The structure flows from Hero -> Opportunity (market data) -> Strategy -> Roadmap -> a new 'Our Virtual IPs' section that replaces the Gemini demo -> Technology -> Vision. Replacing the abstract demo with concrete examples of live IPs makes the company's value proposition more tangible and credible for investors. -->
+    <!-- Visualization & Content Choices: Market Data -> Goal: Compare -> Viz: Bar Chart (Chart.js). Roadmap -> Goal: Show progression -> Viz: Interactive Timeline. Our Virtual IPs -> Goal: Showcase real products -> Viz: Profile cards with embedded YouTube videos & social links -> Interaction: Users can watch videos and visit social channels directly. This provides direct proof of concept. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 50vh;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #FFA9D7;
+            border-bottom-color: #FFA9D7;
+        }
+        .phase-card {
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            border: 2px solid transparent;
+        }
+        .phase-card:hover {
+            transform: translateY(-5px);
+            border-color: #FFA9D7;
+        }
+        .phase-card.active {
+             border-color: #FFA9D7;
+             box-shadow: 0 0 15px rgba(255, 169, 215, 0.3);
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .market-btn {
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+        }
+        .market-btn.active {
+            background-color: #FFA9D7;
+            color: #121212;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#1a1a1a]/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-800">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-2xl font-bold text-white">
+                Super<span class="text-[#FFA9D7]">tify</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#opportunity" class="nav-link">시장 기회</a>
+                <a href="#strategy" class="nav-link">핵심 전략</a>
+                <a href="#roadmap" class="nav-link">로드맵</a>
+                <a href="#our-ips" class="nav-link">소속 IP</a>
+                <a href="#technology" class="nav-link">기술력</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="min-h-[60vh] flex items-center bg-[#1a1a1a]">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+                    AI 시대의 새로운 엔터테인먼트
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+                    우리는 AI 기술 회사가 아닌, AI 시대의 엔터테인먼트 기업입니다. <br class="hidden md:block"> 슈퍼티파이는 24시간 살아 숨 쉬는 '관계형 슈퍼 IP'를 창조하고 육성합니다.
+                </p>
+            </div>
+        </section>
+
+        <section id="opportunity" class="py-20 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">3대 핵심 시장의 융합과 기회</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">슈퍼티파이는 세 개의 거대 시장이 융합되는 지점에서 전례 없는 기회를 맞이합니다. 아래 버튼을 클릭하여 각 시장의 잠재력을 확인해보세요.</p>
+                </div>
+                <div class="text-center mb-8 space-x-2">
+                    <button id="btn-creator" class="market-btn bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none">크리에이터 이코노미</button>
+                    <button id="btn-vtuber" class="market-btn bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none">VTuber 시장</button>
+                    <button id="btn-companion" class="market-btn bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none">AI 컴패니언</button>
+                </div>
+                <div class="bg-[#1a1a1a] p-6 rounded-2xl border border-gray-800">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+                        <div class="md:col-span-2">
+                            <h3 id="market-title" class="text-2xl font-bold text-white mb-2">크리에이터 이코노미</h3>
+                            <p id="market-desc" class="text-gray-400 mb-4">단순 콘텐츠 제작을 넘어 팬과의 직접적인 소통과 수익화가 핵심이 되는 경제 구조입니다.</p>
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <p class="font-bold text-lg text-white">시사점</p>
+                                <p id="market-implication" class="text-gray-300">시장은 이미 거대하며, 팬과 직접 소통하는 '라이브'의 중요성은 더욱 커지고 있습니다.</p>
+                            </div>
+                        </div>
+                        <div class="md:col-span-3">
+                            <div class="chart-container">
+                                <canvas id="marketChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="strategy" class="py-20 bg-[#1a1a1a] section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">핵심 차별화 전략: Live-First, Multi-Revenue</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">먼저 라이브로 팬을 만들고, 깊어진 관계로 다각화된 수익을 창출합니다. 이 선순환 구조는 슈퍼티파이의 핵심 성장 엔진입니다.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center mb-4"><span class="text-4xl">🚀</span></div>
+                        <h3 class="text-xl font-bold text-white mb-2">Phase 1: 팬덤 확보</h3>
+                        <p class="text-gray-400">TikTok & YouTube 라이브에 집중하여 'SuperON'의 자동화된 바이럴 인터랙션으로 초기 팬덤을 빠르게 확보합니다.</p>
+                    </div>
+                    <div class="flex flex-col items-center mt-0 md:mt-8">
+                         <div class="bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center mb-4"><span class="text-4xl">💰</span></div>
+                        <h3 class="text-xl font-bold text-white mb-2">Phase 2: 수익 극대화</h3>
+                        <p class="text-gray-400">구독 기반 '컴패니언 모드'를 런칭하여 팬들이 '나만의 AI'와 깊은 관계를 맺고 기꺼이 비용을 지불하게 만듭니다.</p>
+                    </div>
+                    <div class="flex flex-col items-center mt-0 md:mt-16">
+                         <div class="bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center mb-4"><span class="text-4xl">🌍</span></div>
+                        <h3 class="text-xl font-bold text-white mb-2">Phase 3: 슈퍼 IP 생태계</h3>
+                        <p class="text-gray-400">'캐릭터 스튜디오' 모델을 통해 100개 이상의 AI 캐릭터를 운영하고, 검증된 IP를 집중 육성하여 글로벌로 확장합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="roadmap" class="py-20 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">성장 로드맵</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">체계적인 3단계 로드맵을 통해 '관계형 IP 생태계'를 구축합니다. 각 단계를 클릭하여 상세 목표를 확인하세요.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div class="phase-card bg-[#1a1a1a] p-6 rounded-2xl cursor-pointer" data-phase="1">
+                        <p class="text-sm text-gray-500">Phase 1 (현재~6개월)</p><h3 class="text-2xl font-bold text-[#FFA9D7]">Foundation</h3><p class="text-gray-400 mt-2">초기 팬덤 구축 및<br>수익 모델 검증</p>
+                    </div>
+                     <div class="phase-card bg-[#1a1a1a] p-6 rounded-2xl cursor-pointer" data-phase="2">
+                        <p class="text-sm text-gray-500">Phase 2 (6~12개월)</p><h3 class="text-2xl font-bold text-[#FFA9D7]">Scale</h3><p class="text-gray-400 mt-2">캐릭터 확장 및<br>본격 수익화</p>
+                    </div>
+                     <div class="phase-card bg-[#1a1a1a] p-6 rounded-2xl cursor-pointer" data-phase="3">
+                        <p class="text-sm text-gray-500">Phase 3 (12~24개월)</p><h3 class="text-2xl font-bold text-[#FFA9D7]">Super IP</h3><p class="text-gray-400 mt-2">IP 생태계 구축 및<br>글로벌 확장</p>
+                    </div>
+                </div>
+                <div id="roadmap-details" class="bg-[#1a1a1a] p-8 rounded-2xl border border-gray-800 min-h-[150px] transition-all duration-500"></div>
+            </div>
+        </section>
+
+        <section id="our-ips" class="py-20 bg-[#1a1a1a] section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">슈퍼티파이 소속 버추얼 IP</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">우리의 기술과 크리에이티브로 탄생한 매력적인 AI 버추얼 IP들을 만나보세요.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- 사주오빠 Card -->
+                    <div class="bg-[#121212] p-6 rounded-2xl border border-gray-800 flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-[#FFA9D7]/10">
+                        <div class="mb-4">
+                             <img src="https://placehold.co/600x400/1A1A1A/FFA9D7?text=Saju+Oppa" alt="사주오빠 프로필 이미지" class="rounded-lg w-full object-cover">
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">사주오빠</h3>
+                        <p class="text-[#FFA9D7] font-semibold mb-3">사주 봐주는 잘생긴 오빠, 에겐남</p>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <a href="https://www.tiktok.com/@sajuoppa" target="_blank" class="flex items-center space-x-2 text-white hover:text-[#FFA9D7] transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.01-1.58-.01-3.2-.01-4.8 0-2.06-1.66-3.72-3.72-3.72-2.06 0-3.72 1.66-3.72 3.72s1.66 3.72 3.72 3.72c.04 0 .09 0 .13-.01v4.02c-1.31.02-2.61.01-3.91.02-.08-1.53-.63-3.09-1.75-4.17-1.12-1.11-2.7-1.62-4.24-1.79v-4.03c1.44.05 2.89.35 4.2.97.01 1.58.01 3.2.01 4.8 0 2.06 1.66 3.72 3.72 3.72 2.06 0 3.72-1.66 3.72-3.72s-1.66-3.72-3.72-3.72c-.04 0-.09 0-.13.01Z"/></svg>
+                                <span>TikTok</span>
+                            </a>
+                            <a href="https://www.youtube.com/@sajuoppa" target="_blank" class="flex items-center space-x-2 text-white hover:text-[#FFA9D7] transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/></svg>
+                                <span>YouTube</span>
+                            </a>
+                        </div>
+                        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mt-auto">
+                            <iframe src="https://www.youtube.com/embed/sVOMO6n-G-I" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full"></iframe>
+                        </div>
+                    </div>
+        
+                    <!-- 신도연 Card -->
+                    <div class="bg-[#121212] p-6 rounded-2xl border border-gray-800 flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-[#FFA9D7]/10">
+                         <div class="mb-4">
+                             <img src="https://placehold.co/600x400/1A1A1A/FFA9D7?text=Shin+Doyeon" alt="신도연 프로필 이미지" class="rounded-lg w-full object-cover">
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">신도연 (결정사랑)</h3>
+                        <p class="text-[#FFA9D7] font-semibold mb-3">연애, 결혼 상담 전문 쎈언니, 테토녀</p>
+                         <div class="flex items-center space-x-4 mb-4">
+                            <a href="https://www.tiktok.com/@kyuljunglove" target="_blank" class="flex items-center space-x-2 text-white hover:text-[#FFA9D7] transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.01-1.58-.01-3.2-.01-4.8 0-2.06-1.66-3.72-3.72-3.72-2.06 0-3.72 1.66-3.72 3.72s1.66 3.72 3.72 3.72c.04 0 .09 0 .13-.01v4.02c-1.31.02-2.61.01-3.91.02-.08-1.53-.63-3.09-1.75-4.17-1.12-1.11-2.7-1.62-4.24-1.79v-4.03c1.44.05 2.89.35 4.2.97.01 1.58.01 3.2.01 4.8 0 2.06 1.66 3.72 3.72 3.72 2.06 0 3.72-1.66 3.72-3.72s-1.66-3.72-3.72-3.72c-.04 0-.09 0-.13.01Z"/></svg>
+                                <span>TikTok</span>
+                            </a>
+                            <a href="https://www.youtube.com/@kyuljunglove" target="_blank" class="flex items-center space-x-2 text-white hover:text-[#FFA9D7] transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.861-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/></svg>
+                                <span>YouTube</span>
+                            </a>
+                        </div>
+                        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden mt-auto">
+                            <iframe src="https://www.youtube.com/embed/F_YshjK32zQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="technology" class="py-20 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">차별화된 기술력</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">슈퍼티파이의 독자적인 기술은 깊이 있는 관계 형성을 가능하게 하고, 팬 경험을 극대화합니다.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-800 p-6 rounded-2xl text-center"><h3 class="text-xl font-bold text-white mb-2">Reaction Orchestration Engine</h3><p class="text-gray-400">실시간 감정 분석 및 반응 생성을 통해 바이럴 포인트를 자동 감지하고 팬 인게이지먼트를 최적화합니다.</p></div>
+                    <div class="bg-gray-800 p-6 rounded-2xl text-center"><h3 class="text-xl font-bold text-white mb-2">Memory & Relationship System</h3><p class="text-gray-400">개별 팬과의 대화를 기억하고 관계의 깊이에 따라 차별화된 반응을 제공하여 장기적 관계(Retention)를 극대화합니다.</p></div>
+                    <div class="bg-gray-800 p-6 rounded-2xl text-center"><h3 class="text-xl font-bold text-white mb-2">Cross-Platform Identity</h3><p class="text-gray-400">모든 플랫폼에서 일관된 캐릭터 정체성을 유지하며, 플랫폼별 최적화된 콘텐츠를 제공하는 통합 팬 관리 시스템입니다.</p></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-2xl font-bold text-white mb-2">Every Character Has a Story, <br class="sm:hidden"> Every Fan Has a Connection.</h3>
+            <p class="text-gray-500">Supertify Inc. &copy; 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const accentColor = '#FFA9D7';
+            const marketData = {
+                creator: { title: '크리에이터 이코노미', desc: '단순 콘텐츠 제작을 넘어 팬과의 직접적인 소통과 수익화가 핵심이 되는 경제 구조입니다.', implication: "시장은 이미 거대하며, 팬과 직접 소통하는 '라이브'의 중요성은 더욱 커지고 있습니다.", labels: ['2025년', '2032년'], values: [2025, 8481] },
+                vtuber: { title: 'VTuber 시장', desc: '연평균 성장률(CAGR) 35% 이상의 폭발적인 성장을 보이는 시장으로, 팬덤의 몰입도가 매우 높습니다.', implication: "일본 서브컬처를 넘어 K-버추얼 캐릭터가 메인스트림으로 부상하며 '한국형 IP' 전략에 강력한 기회를 제공합니다.", labels: ['2025년 (최소)', '2025년 (최대)'], values: [39.9, 118.2] },
+                companion: { title: 'AI 컴패니언 시장', desc: '연평균 30% 이상의 높은 성장률로, 단순 챗봇을 넘어 감성적 관계를 형성하는 서비스로 진화하고 있습니다.', implication: "기술 발전이 AI와의 '관계 형성'이라는 새로운 시장을 열고 있으며, 이는 슈퍼티파이의 핵심 전략과 정확히 일치합니다.", labels: ['2025년', '2030년'], values: [367, 1407] }
+            };
+            const roadmapData = {
+                '1': { title: 'Phase 1: Foundation (현재~6개월)', details: ['<strong>10개</strong> 캐릭터 운영', '캐릭터당 월 <strong>2,000만원</strong> 매출 목표', 'AI 컴패니언 기능 <strong>베타 런칭</strong>', '초기 팬덤 구축'] },
+                '2': { title: 'Phase 2: Scale (6~12개월)', details: ['<strong>30개</strong> 캐릭터로 확장', '타겟 국가별 <strong>현지화</strong>', 'AI 컴패니언 <strong>본격 수익화</strong>', 'B2B 파트너십 확대'] },
+                '3': { title: 'Phase 3: Super IP (12~24개월)', details: ['<strong>100+</strong> 캐릭터 생태계 구축', '상위 <strong>10%</strong> 슈퍼 IP 집중 육성', '<strong>오프라인</strong> 진출 (이벤트/팬미팅)', '글로벌 <strong>IP 라이선싱</strong>'] }
+            };
+
+            const ctx = document.getElementById('marketChart').getContext('2d');
+            let marketChart = new Chart(ctx, {
+                type: 'bar', data: { labels: [], datasets: [{ label: '시장 규모 (억 달러)', data: [], backgroundColor: accentColor, borderColor: accentColor, borderWidth: 1, borderRadius: 5, }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#E0E0E0', callback: function(value) { return value + '억$'; } } }, x: { grid: { display: false }, ticks: { color: '#E0E0E0' } } },
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#000', titleColor: '#fff', bodyColor: '#fff', callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) label += ': '; if (context.parsed.y !== null) { label += new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'USD' }).format(context.parsed.y * 100000000); } return label; } } } }
+                }
+            });
+
+            const marketButtons = document.querySelectorAll('.market-btn');
+            function updateChart(marketKey) {
+                const data = marketData[marketKey];
+                document.getElementById('market-title').textContent = data.title;
+                document.getElementById('market-desc').textContent = data.desc;
+                document.getElementById('market-implication').textContent = data.implication;
+                marketChart.data.labels = data.labels;
+                marketChart.data.datasets[0].data = data.values;
+                marketChart.update();
+                marketButtons.forEach(btn => { btn.classList.remove('active'); if(btn.id === `btn-${marketKey}`) { btn.classList.add('active'); } });
+            }
+            document.getElementById('btn-creator').addEventListener('click', () => updateChart('creator'));
+            document.getElementById('btn-vtuber').addEventListener('click', () => updateChart('vtuber'));
+            document.getElementById('btn-companion').addEventListener('click', () => updateChart('companion'));
+            updateChart('creator');
+
+            const phaseCards = document.querySelectorAll('.phase-card');
+            const detailsContainer = document.getElementById('roadmap-details');
+            function updateRoadmapDetails(phaseKey) {
+                const data = roadmapData[phaseKey];
+                let content = `<h3 class="text-xl font-bold mb-4 text-white">${data.title}</h3><ul class="space-y-2 list-disc list-inside text-gray-300">`;
+                data.details.forEach(detail => { content += `<li>${detail}</li>`; });
+                content += `</ul>`;
+                detailsContainer.innerHTML = content;
+                phaseCards.forEach(card => { card.classList.remove('active'); if (card.dataset.phase === phaseKey) { card.classList.add('active'); } });
+            }
+            phaseCards.forEach(card => { card.addEventListener('click', () => { const phaseKey = card.dataset.phase; updateRoadmapDetails(phaseKey); }); });
+            updateRoadmapDetails('1');
+
+            const sections = document.querySelectorAll('.section-fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+            }, { threshold: 0.1 });
+            sections.forEach(section => { observer.observe(section); });
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' }); }); });
+        
+        });
+    </script>
+</body>
+</html>
